@@ -1,32 +1,63 @@
 ﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
+@using Umbraco.Cms.Core
+@using Umbraco.Cms.Core.Models.PublishedContent
+@using Umbraco.Cms.Core.Routing
+@using Umbraco.Extensions
+
+@inject IPublishedValueFallback PublishedValueFallback
+@inject IPublishedUrlProvider PublishedUrlProvider
+
+
+@{ 
+    var site = Model.Root();
+    var selection = Model.Root().Children.Where(x => x.IsVisible(PublishedValueFallback)).ToArray(); 
+    
+}
+
 
 <header>
-<section class="nav-section">
+<section class="navbar">
             <div class="container">
-                <a href="home.html"><img class="logo" src="~/images/logos/logotype.svg" alt="LOGO"></a>
-                <nav>
-                    <div class="nav-top">
+                <a href="home.html"><img class="logo" src="~/images/logos/logotype.svg" alt="Crito logotype."></a>
+                <button class="menu-bars"><i class="fa-solid fa-bars"></i></button>
+                <div class="menu">
+                    <div class="top-menu">
                         <div class="contact-info">
-                            <span><i class="fa-regular fa-phone-volume"></i></i>+46 (8) 121 470 50</span> 
-                            <span><i class="fa-regular fa-envelope"></i>info@crito.se</span>
-                            <span><i class="fa-regular fa-location-dot"></i>Sveavägen 31, 111 34 STOCKHOLM</span>
+                            <div class="info">
+                                <i class="fa-regular fa-phone-volume"></i>
+                                +46 (8) 121 470 50
+                            </div>
+                            <div class="info">
+                                <i class="fa-regular fa-envelope"></i>
+                                info@crito.se
+                            </div>
+                            <div class="info last">
+                                <i class="fa-regular fa-location-dot"></i>
+                                Sveavägen 31, 111 34 STOCKHOLM
+                            </div>
                         </div>
-                        <div class="socialmedia-links">
-                           <a href="https://facebook.com" target="_blank"><i class="fa-brands fa-facebook"></i></a>
-                           <a href="https://twitter.com" target="_blank"><i class="fa-brands fa-twitter"></i></a>
-                           <a href="https://instagram.com" target="_blank"><i class="fa-brands fa-instagram"></i></a>
-                           <a href="https://linkedin.com" target="_blank"><i class="fa-brands fa-linkedin"></i></a>
+                        <div class="social-media">
+                            <a href="https://facebook.com" target="_blank"><i class="fa-brands fa-facebook"></i></a>
+                            <a href="https://twitter.com" target="_blank"><i class="fa-brands fa-x-twitter"></i></a>
+                            <a href="https://instagram.com" target="_blank"><i class="fa-brands fa-instagram"></i></a>
+                            <a href="https://linkedin.com" target="_blank"><i class="fa-brands fa-linkedin"></i></a>
                         </div>
                     </div>
-                    <div class="nav-bottom">
-                        <div class="navbar">
-                            <a class="active" hfred="home.html">Home</a>
-                            <a href="service-html">Service</a>
-                            <a href="news-html">News</a>
-                            <a href="contact-html">Contact</a>
-                        </div>
+                    <div class="bottom-menu">
+                        <nav>
+                            <a class="@(Model.Id == site.Id ? "active": null)" href="@site.Url()">@site.Name</a>
+                            
+                            @if (selection?.Length > 0)
+                            {
+                                @foreach (var item in selection)
+                                {
+                                <a class="@(item.IsAncestorOrSelf(Model) ? "active": null)" href="@item.Url(PublishedUrlProvider)">@item.Name</a>
+                                }    
+                            }
+                     
+                        </nav>
                         <a class="btn-theme" href="login.html">Login <i class="fa-solid fa-arrow-up-right"></i></a>
                     </div>
-                </nav>
+                </div>
             </div>
         </section>
