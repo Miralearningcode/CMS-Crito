@@ -2,28 +2,30 @@
 @inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<ContentModels.HomePage>
 @using ContentModels = Umbraco.Cms.Web.Common.PublishedModels;
 @{
-	Layout = "_Layout.cshtml";
-	ViewData["PageTitle"] = @Model.Value("pageTitle");
-	ViewData["PageDescription"] = @Model.Value("pageDescription");
+	Layout = "LayoutWithShowcase.cshtml";
 }
+@await Html.PartialAsync("_PartnersSection")
 
-<header>
-
-    @await Html.PartialAsync("_NavSection")
-
-    @await Html.PartialAsync("_ShowcaseSection")
+<!-- Features-section -->
+<section class="features">
+        <div class="container">
+            <div class="left-column">
+                <div class="category-title">@Model.Value("serviceFeaturesSectionCategory")</div>
+                <div class="title">
+                    <h2>@Model.Value("serviceFeaturesTitle")</h2>
+                </div>
+                <a class="btn-theme" href="@Model.Value("serviceFeaturesButtonUrl")">@Model.Value("serviceFeaturesButtonText")<i class="fa-solid fa-arrow-up-right"></i></a>
+            </div>
+            <div class="cards">
+                @Html.GetBlockListHtml(Model.ServiceFeatures)
+            </div>
+        </div>
+    </section>
     
-    
-
-</header>
-
-<main>
-    @await Html.PartialAsync("_PartnersSection")
-    
-    @await Html.PartialAsync("_FeaturesSection")
-    
-    @await Html.PartialAsync("_AboutCompany")
-    
-    @await Html.PartialAsync("_OurServices")
-</main>
-}
+    @await Html.PartialAsync("_AboutCompanySection")
+    @await Html.PartialAsync("_OurServicesSection")
+    @await Html.PartialAsync("_WhyChooseUsSection")
+    @await Html.PartialAsync("_ProjectCaseStudiesSection")
+    @await Html.PartialAsync("_MeetOurTeamSection")
+    @await Html.PartialAsync("_ArticleNewsSection")
+    @await Html.PartialAsync("_NewsletterSection")
