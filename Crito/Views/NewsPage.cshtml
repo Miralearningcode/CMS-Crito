@@ -1,8 +1,56 @@
 ﻿@using Umbraco.Cms.Web.Common.PublishedModels;
 @inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<ContentModels.NewsPage>
 @using ContentModels = Umbraco.Cms.Web.Common.PublishedModels;
+@using Umbraco.Cms.Core.Models.PublishedContent;
 @{
 	Layout = "LayoutWithBreadcrumb.cshtml";
 }
+    
 
-@await Html.PartialAsync("_ArticleSection")
+    <section class="article-news">
+        <div class="container">
+            <h2>Our News & Articles</h2>
+          
+            <div class="articles">
+                
+                
+            @{
+            	var selection = Umbraco?.Content(Guid.Parse("ab8b7a30-0e1e-4d0b-abf5-b1024e99916b"))?
+                .ChildrenOfType("newsItemPage")?
+                .Where(x => x.IsVisible())
+                .OrderByDescending(x => x.CreateDate).ToList();
+            }
+            
+            
+            @if (selection != null)
+            {
+                @foreach (var item in selection)
+                {
+                    var url = item.Url();
+                    var date = item.CreateDate;
+                    var image = item.Value<IPublishedContent>("newsImage");
+                    var category = item.Value("newsCategory");
+                    var title = item.Name();
+                    var preamble = item.Value("newsPreamble");
+
+                    <a href="@url" class="article">
+                        <div class="article-date">
+                            <div class="day">@date.ToString("dd")</div>
+                            <div class="month">@date.ToString("MMM")</div>
+                        </div>
+                        <img src="@image?.Url()" alt="A woman sitting beside a desk smiling, wearing a darkgray blazer.">
+                        <div class="category">@category</div>
+                        <h3>@title</h3>
+                        <p>@preamble</p>
+                    </a>
+                }
+            }
+        
+
+            </div>
+            <div class="center-content">
+                <img src="images/pagination.png" alt="Dots.">
+            </div>
+        </div>
+    </section>
+    </section>
