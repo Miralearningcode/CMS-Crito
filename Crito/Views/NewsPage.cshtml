@@ -4,6 +4,21 @@
 @using Umbraco.Cms.Core.Models.PublishedContent;
 @{
 	Layout = "LayoutWithBreadcrumb.cshtml";
+	
+	var itemsPerPage = 9;
+	var pageNumber = 1;
+	
+	if (!int.TryParse(Context.Request.Query["page"], out pageNumber))
+	    pageNumber = 1;
+	    
+	    
+    var selection = Umbraco?.Content(Guid.Parse("ab8b7a30-0e1e-4d0b-abf5-b1024e99916b"))?
+        .ChildrenOfType("newsItemPage")?
+        .Where(x => x.IsVisible())
+        .OrderByDescending(x => x.CreateDate).ToList();
+  
+	var totalItems = selection?.Count() ?? 0;
+	var pagedItems = selection?.Skip((pageNumber - 1) * itemsPerPage).Take(itemsPerPage);
 }
     
 
@@ -12,19 +27,11 @@
             <h2>Our News & Articles</h2>
           
             <div class="articles">
-                
-                
-            @{
-            	var selection = Umbraco?.Content(Guid.Parse("ab8b7a30-0e1e-4d0b-abf5-b1024e99916b"))?
-                .ChildrenOfType("newsItemPage")?
-                .Where(x => x.IsVisible())
-                .OrderByDescending(x => x.CreateDate).ToList();
-            }
-            
-            
-            @if (selection != null)
+     
+        
+            @if (pagedItems != null)
             {
-                @foreach (var item in selection)
+                @foreach (var item in pagedItems!)
                 {
                     var url = item.Url();
                     var date = item.CreateDate;
@@ -49,8 +56,35 @@
 
             </div>
             <div class="center-content">
-                <img src="images/pagination.png" alt="Dots.">
+                <nav class="item-pagination" aria-label="Page navigation">
+                    @if (pageNumber > 1) 
+                    {
+                        <a href="?page=@(pageNumber - 1)" class="item-link link-prev" aria-label="Previous">
+                            <span aria-hidden="true"><i class="fa-sharp fa-solid fa-chevron-left"></i></span>
+                        </a>
+                        
+                    }
+                    
+                    @for (int i = 1; i <= Math.Ceiling((decimal)totalItems / itemsPerPage); i++)
+                    {
+                        if (i == pageNumber)
+                        {
+                            <a href="#" class="item-link active">@i</a>
+                        }
+                        else
+                        {
+                            <a href="?page=@i" class="item-link">@i</a>
+                        }
+                    }
+        
+                    @if (pageNumber < Math.Ceiling((decimal)totalItems / itemsPerPage)) 
+                    {
+                        <a href="?page=@(pageNumber + 1)" class="item-link link-next">
+                            <span aria-hidden="true"><i class="fa-sharp fa-solid fa-chevron-right"></i></span>
+                        </a>
+                    }
+
+                </nav>
             </div>
         </div>
-    </section>
     </section>
